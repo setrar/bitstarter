@@ -21,9 +21,11 @@ References:
    - https://developer.mozilla.org/en-US/docs/JSON#JSON_in_Firefox_2
 */
 
-var fs = require('fs');
-var program = require('commander');
-var cheerio = require('cheerio');
+var fs = require('fs'),
+    program = require('commander'),
+    cheerio = require('cheerio'),
+    rest = require('restler');
+
 var HTMLFILE_DEFAULT = "index.html";
 var CHECKSFILE_DEFAULT = "checks.json";
 
