@@ -63,14 +63,38 @@ var clone = function(fn) {
     return fn.bind({});
 };
 
+var getUrl = function(apiurl) {
+    rest.get(apiurl).on('complete', function(result) {
+        if (result instanceof Error) {
+          console.log('Error: ' + result.message);
+          process.exit(1);
+        } else {
+          fs.writeFileSync( program.file, result.toString());
+          // Making it Synchronous
+          checkFileAndDisplayContent();
+        }
+      }
+    )
+};
+
+var checkFileAndDisplayContent = function() {
+    var checkJson = checkHtmlFile(program.file, program.checks);
+    var outJson = JSON.stringify(checkJson, null, 4);
+    console.log(outJson);  
+}
+
 if(require.main == module) {
     program
         .option('-c, --checks <check_file>', 'Path to checks.json', clone(assertFileExists), CHECKSFILE_DEFAULT)
         .option('-f, --file <html_file>', 'Path to index.html', clone(assertFileExists), HTMLFILE_DEFAULT)
+        .option('-u, --url <html_site>', 'Link to a url to index.html')
         .parse(process.argv);
-    var checkJson = checkHtmlFile(program.file, program.checks);
-    var outJson = JSON.stringify(checkJson, null, 4);
-    console.log(outJson);
+    if(program.url) {
+      getUrl(program.url)
+    } else {
+      checkFileAndDisplayContent();
+    }
+
 } else {
     exports.checkHtmlFile = checkHtmlFile;
 }
